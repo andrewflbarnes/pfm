@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+pfm-doctor() {
+    if [[ "$1" != "doctor" ]]
+    then
+        echo "doctor must be first arg - make sure you are using \`pfm init'" >&2
+        return 1
+    fi
+    shift 1
+
+    if ! [[ "$(type -t pfm)" == "function" ]]
+    then
+        echo "pfm not initialised in this shell, see \`pfm init'"
+    else
+        echo "pfm is initialised in this shell :)"
+    fi
+    echo "PFM_EXEC     : $PFM_EXEC"
+    echo "PFM_HOME     : $PFM_HOME"
+    echo "PFM_SESSIONS : $PFM_SESSIONS"
+}
+
+# shellcheck disable=SC2016
+:; pfm-doctor "$@"

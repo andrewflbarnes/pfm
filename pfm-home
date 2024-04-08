@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+pfm-home() {
+  if [ -z "$PFM_HOME" ]
+  then
+    echo "PFM_HOME is not set" >&2
+    return 1
+  fi
+
+  echo "$PFM_HOME"
+}
+
+:; pfm-home "$@"

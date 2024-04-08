@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+pfm-stop() {
+    if [[ "$1" != "stop" ]]
+    then
+        echo "stop must be first arg - make sure you are using \`pfm stop'" >&2
+        return 1
+    fi
+    shift 1
+
+    local type=$1
+    local session_file
+
+    if [[ "-" == "$1" ]]
+    then
+        session_file=$2
+        host=$3
+    fi
+    # TODO else we construct from inputs - delegate to some other func so we can also use in local etc.
+
+    if ! [ -e "$session_file" ]
+    then
+        # TODO we should emit the conn details, might need to destructure session_file
+        echo "No port forwarding found for $session_file" >&2
+        return 1
+    fi
+
+    if ! ssh -S "$session_file" -O exit "$host"
+    then
+        echo "Failed to exit sessions $session_file" >&2
+        return 2
+    fi
+    if ! rm  -f "$session_file"
+    then
+        echo "Failed to remove session file" >&2
+        return 3
+    fi
+}
+
+:; pfm-stop "$@"

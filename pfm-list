@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+pfm-list() {
+    ls "$PFM_SESSIONS"
+}
+
+
+:; pfm-list "$@"

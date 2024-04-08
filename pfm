@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+:; [[ "$PFM_DEBUG" == 1 ]] && set -x
+
+:; export PFM_HOME; PFM_HOME="${PFM_HOME:-$HOME/.pfm}"
+:; export PFM_SESSIONS; PFM_SESSIONS="$PFM_HOME/sessions"
+:; export PFM_EXEC; PFM_EXEC=$(dirname "$(realpath "$0")") || { echo "Cannot resolve exec path from \"$0\"" >&2; exit 1; }
+
+:; [[ "$1" == "init" ]] && { ./pfm-init "$1" "$2" "$0" || :; exit; }
+
+pfm() {
+    (
+        if [[ "$PFM_DEBUG" == 1 ]]
+        then
+            export PS4_PADDING="                            "
+            export PS4='+ ${BASH_SOURCE[0]}:${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-${#BASH_SOURCE[0]}))} '
+            set -x
+            export PFM_DEBUG
+            export SHELLOPTS
+        fi
+        __pfm_run "$@"
+    )
+}
+
+__pfm_run() {
+    local cmd=${1:-help}
+    local full_cmd="pfm-${cmd}"
+    if ! type -t "$full_cmd" &>/dev/null
+    then
+        echo "Unrecognised command: $cmd" >&2
+        return 1
+    fi
+
+    "$full_cmd" "$@"
+}
+
+:; pfm "$@"

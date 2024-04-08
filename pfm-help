@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+pfm-help() {
+    echo "Usage: pfm cmd [option...]"
+    echo
+    echo "Commands:"
+    echo " - help     : show this help"
+    echo " - init     : initialise your shell"
+    echo " - list     : list running port forwards"
+    echo " - local    : create a local port forward"
+    echo " - stop     : stop a port forward"
+    echo " - doctor   : diagnostics"
+}
+
+:; pfm-help "$@"

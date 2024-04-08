@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+pfm-local() {
+    if [[ "$1" != "local" ]]
+    then
+        echo "local must be first arg - make sure you are using \`pfm local'" >&2
+        return 1
+    fi
+    shift 1
+
+    local host=$1
+    local lport=$2
+    local rport=${3:-$lport}
+    # TODO check PFM_SESSIONS exists, check is created, create if missing, warnings and exit if not
+    
+    if [ -z "$rport" ]
+    then
+        echo "Usage: pfm local <host> <lport> [rport]"
+        return 1
+    fi
+
+    local session_file="$PFM_SESSIONS/${host}_local_${lport}_${rport}"
+    if [ -e "$session_file" ]
+    then
+        echo "Session already exists for localhost:$lport -> $host:$rport"
+        return 2
+    fi
+
+    if ! ssh -M -S "$session_file" -fnNT "$host"
+    then
+        echo "Failed to establish connection to $host" >&2
+        pfm-stop stop - "$session_file" "$host" || :
+        return 3
+    fi
+
+    if ! ssh -S "$session_file" -O forward -L "$lport:localhost:$rport" "$host"
+    then
+        echo "Failed to forward port $lport to $host:$rport" >&2
+        pfm-stop stop - "$session_file" "$host" || :
+        return 4
+    fi
+}
+
+:; pfm-local "$@"
