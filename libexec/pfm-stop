@@ -15,10 +15,15 @@ pfm-stop() {
     then
         session_file=$2
         host=$3
+
+        if ! [ -S "$session_file" ] && [ -S "$PFM_SESSIONS/$session_file" ]
+        then
+            session_file="$PFM_SESSIONS/$session_file"
+        fi
     fi
     # TODO else we construct from inputs - delegate to some other func so we can also use in local etc.
 
-    if ! [ -e "$session_file" ]
+    if ! [ -S "$session_file" ]
     then
         # TODO we should emit the conn details, might need to destructure session_file
         echo "No port forwarding found for $session_file" >&2
