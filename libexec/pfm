@@ -6,8 +6,6 @@
 :; export PFM_SESSIONS; PFM_SESSIONS="$PFM_HOME/sessions"
 :; export PFM_EXEC; PFM_EXEC=$(dirname "$(realpath "$0")") || { echo "Cannot resolve exec path from \"$0\"" >&2; exit 1; }
 
-:; [[ "$1" == "init" ]] && { pfm-init "$1" "$2" "$0" || :; exit; }
-
 pfm() {
     (
         if [[ "$PFM_DEBUG" == 1 ]]
