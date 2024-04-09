@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 pfm-list() {
+    if [[ "$1" != "list" ]]
+    then
+        echo "Must be run as \`pfm list'" >&2
+        return 1
+    fi
+    shift
+
     (
         cd "$PFM_SESSIONS" || return $?
         shopt -s nullglob

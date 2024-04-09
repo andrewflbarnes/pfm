@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
 pfm-home() {
+  if [[ "$1" != "home" ]]
+  then
+      echo "Must be run as \`pfm home'" >&2
+      return 1
+  fi
+  shift
+
   if [ -z "$PFM_HOME" ]
   then
     echo "PFM_HOME is not set" >&2
-    return 1
+    return 2
   fi
 
   echo "$PFM_HOME"

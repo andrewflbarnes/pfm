@@ -3,10 +3,10 @@
 pfm-stop() {
     if [[ "$1" != "stop" ]]
     then
-        echo "stop must be first arg - make sure you are using \`pfm stop'" >&2
+        echo "Must be run as \`pfm stop'" >&2
         return 1
     fi
-    shift 1
+    shift
 
     local type=$1
     local session_file

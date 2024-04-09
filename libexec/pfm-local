@@ -3,10 +3,10 @@
 pfm-local() {
     if [[ "$1" != "local" ]]
     then
-        echo "local must be first arg - make sure you are using \`pfm local'" >&2
+        echo "Must be run as \`pfm local'" >&2
         return 1
     fi
-    shift 1
+    shift
 
     local lport=$1
     local ssh_host=$2

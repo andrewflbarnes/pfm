@@ -3,10 +3,10 @@
 pfm-doctor() {
     if [[ "$1" != "doctor" ]]
     then
-        echo "doctor must be first arg - make sure you are using \`pfm init'" >&2
+        echo "Must be run as \`pfm doctor'" >&2
         return 1
     fi
-    shift 1
+    shift
 
     if ! [[ "$(type -t pfm)" == "function" ]]
     then

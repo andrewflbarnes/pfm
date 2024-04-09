@@ -3,11 +3,12 @@
 pfm-init() {
     if [[ "$1" != "init" ]]
     then
-        echo "init must be first arg - make sure you are using \`pfm init'" >&2
+        echo "Must be run as \`pfm init'" >&2
         return 1
     fi
+    shift
     
-    if [ -z "$2" ]
+    if [ -z "$1" ]
     then
         echo "Run the below in your shell and add it your shell rc file"
         # shellcheck disable=SC2016

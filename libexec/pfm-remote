@@ -3,10 +3,10 @@
 pfm-remote() {
     if [[ "$1" != "remote" ]]
     then
-        echo "remote must be first arg - make sure you are using \`pfm remote'" >&2
+        echo "Must be run as \`pfm remote'" >&2
         return 1
     fi
-    shift 1
+    shift
 
     local ssh_host=$1
     local ssh_port=$2

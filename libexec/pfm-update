@@ -3,7 +3,7 @@
 pfm-update() {
     if [[ "$1" != "update" ]]
     then
-        echo "update must be first arg - make sure you are using \`pfm update'" >&2
+        echo "Must be run as \`pfm update'" >&2
         return 1
     fi
     shift
