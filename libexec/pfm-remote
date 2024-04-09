@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+pfm-remote() {
+    if [[ "$1" != "remote" ]]
+    then
+        echo "remote must be first arg - make sure you are using \`pfm remote'" >&2
+        return 1
+    fi
+    shift 1
+
+    local ssh_host=$1
+    local ssh_port=$2
+    local forward_host=$3
+    local forward_port=$4
+
+    if [ -z "$3" ]
+    then
+        forward_host=localhost
+        forward_port=$ssh_port
+    elif [ -z "$4" ]
+    then
+        forward_host=localhost
+        forward_port=$3
+    fi
+    
+    if [ -z "$forward_port" ]
+    then
+        echo "Usage: pfm remote <ssh host> <ssh port> [forward host [forward port]]" >&2
+        return 2
+    fi
+
+    local session_file="$PFM_SESSIONS/${ssh_host}=remote=${ssh_port}=${forward_host}=${forward_port}"
+    if [ -e "$session_file" ]
+    then
+        echo "Session already exists for $ssh_host:$ssh_port -> localhost -> $forward_host:$forward_port" >&2
+        return 3
+    fi
+
+    if ! ssh -M -S "$session_file" -fnNT "$ssh_host"
+    then
+        echo "Failed to establish connection to $ssh_host" >&2
+        pfm-stop stop - "$session_file" || :
+        return 4
+    fi
+
+    if ! ssh -S "$session_file" -O forward -R "$ssh_port:$forward_host:$forward_port" "$ssh_host"
+    then
+        echo "Failed to forward remote port $ssh_host:$ssh_port -> localhost -> $forward_host:$forward_port" >&2
+        pfm-stop stop - "$session_file" || :
+        return 5
+    fi
+}
+
+:; pfm-remote "$@"
