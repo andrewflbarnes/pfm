@@ -53,11 +53,15 @@ pfm-stop() {
         return 3
     fi
 
-    if ! ssh -S "$session_file" -O exit ""
+    echo -n "Stopping session at $session_file..."
+
+    if ! ssh -S "$session_file" -O exit "" &>/dev/null
     then
-        echo "Failed to exit sessions $session_file" >&2
+        echo "Failed" >&2
         return 4
     fi
+    echo "Done"
+
     if ! rm  -f "$session_file"
     then
         echo "Failed to remove session file" >&2
