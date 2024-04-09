@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pfm-doctor() {
+__pfm-doctor() {
     if [[ "$1" != "doctor" ]]
     then
         echo "Must be run as \`pfm doctor'" >&2
@@ -51,4 +51,4 @@ pfm-doctor() {
 }
 
 # shellcheck disable=SC2016
-:; pfm-doctor "$@"
+:; __pfm-doctor "$@"

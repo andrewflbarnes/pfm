@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pfm-stop() {
+__pfm-stop() {
     if [[ "$1" != "stop" ]]
     then
         echo "Must be run as \`pfm stop'" >&2
@@ -38,7 +38,7 @@ pfm-stop() {
             do
                 if [ -S "$f" ]
                 then
-                    pfm-stop stop - "$f" || err=4
+                    __pfm-stop stop - "$f" || err=4
                 fi
             done
             return $err
@@ -69,4 +69,4 @@ pfm-stop() {
     fi
 }
 
-:; pfm-stop "$@"
+:; __pfm-stop "$@"

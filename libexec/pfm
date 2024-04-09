@@ -3,7 +3,7 @@
 :; [[ "$PFM_DEBUG" == 1 ]] && set -x
 
 :; export PFM_HOME; PFM_HOME="${PFM_HOME:-$HOME/.pfm}"
-:; export PFM_SESSIONS; PFM_SESSIONS="$PFM_HOME/sessions"
+:; export PFM_SESSIONS; PFM_SESSIONS="${PFM_SESSIONS:-$PFM_HOME/sessions}"
 :; export PFM_EXEC; PFM_EXEC=$(dirname "$(realpath "$0")") || { echo "Cannot resolve exec path from \"$0\"" >&2; exit 1; }
 
 pfm() {
@@ -22,7 +22,7 @@ pfm() {
 
 __pfm_run() {
     local cmd=${1:-help}
-    local full_cmd="pfm-${cmd}"
+    local full_cmd="__pfm-${cmd}"
     if ! type -t "$full_cmd" &>/dev/null
     then
         echo "Unrecognised command: $cmd" >&2

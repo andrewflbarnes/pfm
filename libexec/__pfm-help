@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pfm-help() {
+__pfm-help() {
     echo "Usage: pfm cmd [option...]"
     echo
     echo "Commands:"
@@ -12,4 +12,4 @@ pfm-help() {
     echo " - doctor   : diagnostics"
 }
 
-:; pfm-help "$@"
+:; __pfm-help "$@"

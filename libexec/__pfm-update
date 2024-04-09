@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pfm-update() {
+__pfm-update() {
     if [[ "$1" != "update" ]]
     then
         echo "Must be run as \`pfm update'" >&2
@@ -33,4 +33,4 @@ pfm-update() {
     return 3
 }
 
-:; pfm-update "$@"
+:; __pfm-update "$@"
