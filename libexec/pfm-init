@@ -4,7 +4,7 @@ pfm-init() {
     if [[ "$1" != "init" ]]
     then
         echo "init must be first arg - make sure you are using \`pfm init'" >&2
-        return 2
+        return 1
     fi
     
     if [ -z "$2" ]
@@ -18,7 +18,7 @@ pfm-init() {
     if [ -z "$PFM_EXEC" ]
     then
         echo "pfm exec path unset - make sure you are using \`pfm init'" >&2
-        return 3
+        return 2
     fi
     
     echo "export PFM_HOME=\"$PFM_HOME\""
@@ -40,7 +40,7 @@ pfm-init() {
         if ! mkdir -p "$folder"
         then
             echo "Cannot create folder \"$folder\"" >&2
-            return 4
+            return 3
         fi
     done
 }

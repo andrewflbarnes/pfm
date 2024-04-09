@@ -16,28 +16,28 @@ pfm-local() {
     if [ -z "$rport" ]
     then
         echo "Usage: pfm local <host> <lport> [rport]"
-        return 1
+        return 2
     fi
 
     local session_file="$PFM_SESSIONS/${host}_local_${lport}_${rport}"
     if [ -e "$session_file" ]
     then
         echo "Session already exists for localhost:$lport -> $host:$rport"
-        return 2
+        return 3
     fi
 
     if ! ssh -M -S "$session_file" -fnNT "$host"
     then
         echo "Failed to establish connection to $host" >&2
         pfm-stop stop - "$session_file" "$host" || :
-        return 3
+        return 4
     fi
 
     if ! ssh -S "$session_file" -O forward -L "$lport:localhost:$rport" "$host"
     then
         echo "Failed to forward port $lport to $host:$rport" >&2
         pfm-stop stop - "$session_file" "$host" || :
-        return 4
+        return 5
     fi
 }
 

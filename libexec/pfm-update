@@ -4,7 +4,7 @@ pfm-update() {
     if [[ "$1" != "update" ]]
     then
         echo "update must be first arg - make sure you are using \`pfm update'" >&2
-        return 2
+        return 1
     fi
     shift
 
@@ -12,14 +12,25 @@ pfm-update() {
 
     if [ -d "$PFM_HOME/.git" ]
     then
+        if ! type -t git &>/dev/null
+        then
+            echo "pmf is a git repository installation but git not found on system, cannot update" >&2
+            return 2
+        fi
+
         git -C "$PFM_HOME" pull
         return $?
     fi
 
-    # todo check if brew
+    # Not distributed through brew so not enabled
+    #if type -t brew &>/dev/null && [[ "$(realpath "$(which pfm)")" =~ ^"$(brew --cellar)"/pfm ]]
+    #then
+    #    brew upgrade pfm
+    #    return $?
+    #fi
     
     echo "PFM updates are not supported by your installation method :(" >&2
-    return 1
+    return 3
 }
 
 :; pfm-update "$@"

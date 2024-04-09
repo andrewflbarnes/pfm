@@ -11,7 +11,7 @@ pfm-stop() {
     local type=$1
     local session_file
 
-    if [[ "-" == "$1" ]]
+    if [[ "-" == "$type" ]]
     then
         session_file=$2
         host=$3
@@ -27,18 +27,18 @@ pfm-stop() {
     then
         # TODO we should emit the conn details, might need to destructure session_file
         echo "No port forwarding found for $session_file" >&2
-        return 1
+        return 2
     fi
 
     if ! ssh -S "$session_file" -O exit "$host"
     then
         echo "Failed to exit sessions $session_file" >&2
-        return 2
+        return 3
     fi
     if ! rm  -f "$session_file"
     then
         echo "Failed to remove session file" >&2
-        return 3
+        return 4
     fi
 }
 
