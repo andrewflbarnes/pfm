@@ -9,14 +9,14 @@ __pfm-list() {
     shift
 
     (
-        cd "$PFM_SESSIONS" || return $?
+        \cd "$PFM_SESSIONS" || return $?
         shopt -s nullglob
         local s
         for s in *
         do
             echo "$s"
         done \
-        | awk '
+        | \awk '
             BEGIN {
                 FS="="
                 last_ssh_host="dummy"

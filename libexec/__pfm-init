@@ -31,7 +31,7 @@ __pfm-init() {
         local f
         for f in "$PFM_EXEC"/*
         do
-            grep -Ehv "^\s*(:;|#)" "$f"
+            \grep -Ehv "^\s*(:;|#)" "$f"
         done
     )
 
