@@ -14,31 +14,54 @@ pfm-stop() {
     if [[ "-" == "$type" ]]
     then
         session_file=$2
-        host=$3
 
         if ! [ -S "$session_file" ] && [ -S "$PFM_SESSIONS/$session_file" ]
         then
             session_file="$PFM_SESSIONS/$session_file"
         fi
+    elif [[ "all" == "$type" ]]
+    then
+        session_file="all"
+    else
+        echo "Invalid stop request" >&2
+        return 2
     fi
     # TODO else we construct from inputs - delegate to some other func so we can also use in local etc.
+
+    if [[ "$session_file" == "all" ]]
+    then
+        (
+            local err=0
+            shopt -s nullglob
+            local f
+            for f in "$PFM_SESSIONS"/*
+            do
+                if [ -S "$f" ]
+                then
+                    pfm-stop stop - "$f" || err=4
+                fi
+            done
+            return $err
+        )
+        return $?
+    fi
 
     if ! [ -S "$session_file" ]
     then
         # TODO we should emit the conn details, might need to destructure session_file
         echo "No port forwarding found for $session_file" >&2
-        return 2
+        return 3
     fi
 
-    if ! ssh -S "$session_file" -O exit "$host"
+    if ! ssh -S "$session_file" -O exit ""
     then
         echo "Failed to exit sessions $session_file" >&2
-        return 3
+        return 4
     fi
     if ! rm  -f "$session_file"
     then
         echo "Failed to remove session file" >&2
-        return 4
+        return 5
     fi
 }
 
