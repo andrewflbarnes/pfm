@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+pfm-update() {
+    if [[ "$1" != "update" ]]
+    then
+        echo "update must be first arg - make sure you are using \`pfm update'" >&2
+        return 2
+    fi
+    shift
+
+    # todo might need to do something smart here to prevent issues with local dev?
+
+    if [ -d "$PFM_HOME/.git" ]
+    then
+        git -C "$PFM_HOME" pull
+        return $?
+    fi
+
+    # todo check if brew
+    
+    echo "PFM updates are not supported by your installation method :(" >&2
+    return 1
+}
+
+:; pfm-update "$@"
