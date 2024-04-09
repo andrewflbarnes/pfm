@@ -19,7 +19,7 @@ pfm-local() {
         rport=$lport
     elif [ -z "$4" ]
     then
-        rhost=$ssh_host
+        rhost=localhost
         rport=$3
     fi
     # TODO check PFM_SESSIONS exists, check is created, create if missing, warnings and exit if not
