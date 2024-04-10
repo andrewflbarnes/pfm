@@ -30,24 +30,32 @@ __pfm-remote() {
     fi
 
     local session_file="$PFM_SESSIONS/${ssh_host}=remote=${ssh_port}=${forward_host}=${forward_port}"
-    if [ -e "$session_file" ]
+    local session_socket; session_socket="$PFM_SESSIONS/.r.$(cksum <<< "$session_file" | cut -f 1 -d ' ')"
+    if [ -e "$session_file" ] || [ -e "$session_socket" ]
     then
         echo "Session already exists for $ssh_host:$ssh_port -> localhost -> $forward_host:$forward_port" >&2
         return 3
     fi
 
-    if ! ssh -M -S "$session_file" -fnNT "$ssh_host"
+    if ! ssh -M -S "$session_socket" -fnNT "$ssh_host"
     then
         echo "Failed to establish connection to $ssh_host" >&2
-        __pfm-stop stop - "$session_file" || :
+        __pfm-stop stop - "$session_socket" || :
         return 4
     fi
 
-    if ! ssh -S "$session_file" -O forward -R "$ssh_port:$forward_host:$forward_port" "$ssh_host"
+    if ! ssh -S "$session_socket" -O forward -R "$ssh_port:$forward_host:$forward_port" "$ssh_host"
     then
         echo "Failed to forward remote port $ssh_host:$ssh_port -> localhost -> $forward_host:$forward_port" >&2
-        __pfm-stop stop - "$session_file" || :
+        __pfm-stop stop - "$session_socket" || :
         return 5
+    fi
+
+    if ! ln -s "$session_socket" "$session_file"
+    then
+        echo "Failed to link unix socket for remote port $ssh_host:$ssh_port -> localhost -> $forward_host:$forward_port" >&2
+        __pfm-stop stop - "$session_socket" || :
+        return 6
     fi
 }
 

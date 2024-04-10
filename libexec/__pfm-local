@@ -30,24 +30,32 @@ __pfm-local() {
     fi
 
     local session_file="$PFM_SESSIONS/${ssh_host}=local=${lport}=${rhost}=${rport}"
-    if [ -e "$session_file" ]
+    local session_socket; session_socket="$PFM_SESSIONS/.l.$(cksum <<< "$session_file" | cut -f 1 -d ' ')"
+    if [ -e "$session_file" ] || [ -e "$session_socket" ]
     then
         echo "Session already exists for localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
         return 3
     fi
 
-    if ! ssh -M -S "$session_file" -fnNT "$ssh_host"
+    if ! ssh -M -S "$session_socket" -fnNT "$ssh_host"
     then
         echo "Failed to establish connection to $ssh_host" >&2
-        __pfm-stop stop - "$session_file" || :
+        __pfm-stop stop - "$session_socket" || :
         return 4
     fi
 
-    if ! ssh -S "$session_file" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
+    if ! ssh -S "$session_socket" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
     then
         echo "Failed to forward local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
-        __pfm-stop stop - "$session_file" || :
+        __pfm-stop stop - "$session_socket" || :
         return 5
+    fi
+
+    if ! ln -s "$session_socket" "$session_file"
+    then
+        echo "Failed to link unix socket for local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
+        __pfm-stop stop - "$session_socket" || :
+        return 6
     fi
 }
 

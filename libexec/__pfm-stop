@@ -46,16 +46,18 @@ __pfm-stop() {
         return $?
     fi
 
-    if ! [ -S "$session_file" ]
+    local session_socket; session_socket="$(realpath "$session_file")"
+
+    if ! [ -S "$session_socket" ]
     then
         # TODO we should emit the conn details, might need to destructure session_file
         echo "No port forwarding found for $session_file" >&2
         return 3
     fi
 
-    echo -n "Stopping session at $session_file..."
+    echo -n "Stopping session at $session_socket..."
 
-    if ! ssh -S "$session_file" -O exit "" &>/dev/null
+    if ! ssh -S "$session_socket" -O exit "" &>/dev/null
     then
         echo "Failed" >&2
         return 4
