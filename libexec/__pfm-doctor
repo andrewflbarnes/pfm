@@ -47,6 +47,7 @@ __pfm-doctor() {
                     state="Disconnected"
                 fi
                 echo "$state : $s"
+                echo "             > $(realpath "$s")"
             done
         )
     fi
