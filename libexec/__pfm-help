@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# META:HELP 1:show this help
+# META-HELP:1:show this help
 
 __pfm-help() {
     echo "Usage: pfm cmd [option...]"
@@ -8,22 +8,14 @@ __pfm-help() {
     echo "Commands:"
     (
         shopt -s nullglob
-        local f
-        for f in "$PFM_EXEC"/__pfm-*
-        do
-            local cmd; cmd=$(basename "$f" | cut -c 7-)
-            local help; help=$(sed -n '/^# META:HELP/{s/.*META:HELP [0-9]\{1,\}://;p;}' "$f")
-            help=${help:-"pfm $cmd"}
-            local pri; pri=$(sed -n '/^# META:HELP/{s/.*META:HELP \([0-9]\{1,\}\):.*/\1/;p;}' "$f")
-            pri=${pri:-5}
-            echo "$pri" "$cmd" "$help"
-        done \
-          | sort -n \
-          | cut -f 2- -d ' ' \
-          | awk '{
-              $1 = sprintf(" - %-10s :", $1);
-              print;
-          }'
+        grep "^# *META-HELP" "$PFM_EXEC"/* \
+            | sed 's/.*pfm-\(.*\):.*META-HELP *:\(.*\):\(.*\)$/\2 \1 \3/' \
+            | sort -n \
+            | cut -f 2- -d ' ' \
+            | awk '{
+                $1 = sprintf(" - %-10s :", $1);
+                print;
+            }'
     )
 }
 

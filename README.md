@@ -16,12 +16,12 @@ git clone git@github.com:andrewflbarnes/pfm ~/.pfm
 
 cat << EOS >> ~/.bashrc
 export PFM_HOME="\$HOME/.pfm"
-PATH="\$PFM_HOME/libexec:\$PATH"
+PATH="\$PFM_HOME/bin:\$PATH"
 eval "\$(pfm init -)"
 EOS
 
 export PFM_HOME="$HOME/.pfm"
-PATH="$PFM_HOME/libexec:$PATH"
+PATH="$PFM_HOME/bin:$PATH"
 eval "$(pfm init -)"
 ```
 

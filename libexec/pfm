@@ -6,8 +6,9 @@
 
 :; export PFM_HOME; PFM_HOME="${PFM_HOME:-$HOME/.pfm}"
 :; export PFM_SESSIONS; PFM_SESSIONS="${PFM_SESSIONS:-$PFM_HOME/sessions}"
-:; export PFM_EXEC; PFM_EXEC=$(dirname "$(realpath "$0")") || { echo "Cannot resolve exec path from \"$0\"" >&2; exit 1; }
 :; mkdir -p "$PFM_SESSIONS"
+:; export PFM_EXEC; PFM_EXEC=$(realpath "$(dirname "$(dirname "$(realpath "$0")")")"/libexec) || { echo "Cannot resolve exec path from \"$0\"" >&2; exit 1; }
+:; export PATH="$PFM_EXEC:$PATH"
 
 pfm() {
     (

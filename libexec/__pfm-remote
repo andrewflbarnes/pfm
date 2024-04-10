@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# META:HELP 6:forward a remote port to a local port
+# META-HELP:6:forward a remote port to a local port
 
 __pfm-remote() {
     if [[ "$1" != "remote" ]]

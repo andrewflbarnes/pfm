@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# META:HELP 5:list active local and remote sessions
+# META-HELP:5:list active local and remote sessions
 
 __pfm-list() {
     if [[ "$1" != "list" ]]

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# META:HELP 7:update pfm to the latest version
+# META-HELP:7:update pfm to the latest version
 
 __pfm-update() {
     if [[ "$1" != "update" ]]
