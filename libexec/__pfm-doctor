@@ -51,6 +51,13 @@ __pfm-doctor() {
         echo "No"
     fi
 
+    if [ -n "$PFM_SHELL" ]
+    then
+        echo
+        echo "Shell support"
+        pfm init "$PFM_SHELL" | sed -n '/^#/{s/^# *//;p;}'
+    fi
+
     if [ -n "$PFM_SESSIONS" ] && [ -d "$PFM_SESSIONS" ]
     then
         (

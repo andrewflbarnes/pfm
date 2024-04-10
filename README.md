@@ -17,12 +17,12 @@ git clone git@github.com:andrewflbarnes/pfm ~/.pfm
 cat << EOS >> ~/.bashrc
 export PFM_HOME="\$HOME/.pfm"
 PATH="\$PFM_HOME/bin:\$PATH"
-eval "\$(pfm init -)"
+eval "\$(pfm init bash)"
 EOS
 
 export PFM_HOME="$HOME/.pfm"
 PATH="$PFM_HOME/bin:$PATH"
-eval "$(pfm init -)"
+eval "$(pfm init bash)"
 ```
 
 ## Usage
@@ -33,7 +33,7 @@ To see a list of commands just run `pfm` without any arguments.
 
 ### Optional init function caching
 
-The step to `eval "$(pfm init -)"` is optional and will result in pfm functions getting cached in the shell.
+The step to `eval "$(pfm init bash)"` is optional and will result in pfm functions getting cached in the shell.
 
 This speeds up execution from the shell and is a proof of concept which may be useful for other
 tooling like jenv which has prompt command interceptors.

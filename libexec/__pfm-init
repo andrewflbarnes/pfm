@@ -10,42 +10,53 @@ __pfm-init() {
     fi
     shift
 
-    if [ -z "$1" ]
+    local shell=$1
+
+    if [ -z "$shell" ]
     then
         echo "Run the below in your shell and add it your shell rc file."
-        echo "Supported shells: bash"
         # shellcheck disable=SC2016
         echo 'eval "$(pfm init <shell>)"'
         return
     fi
 
-    if [[ "bash" != "$1" ]]
-    then
-        echo "Unsupported shell for init: $1" >&2
-        echo "Supported shells: bash" >&2
-        return 2
-    fi
-
     if [ -z "$PFM_LIBEXEC" ]
     then
         echo "pfm exec path unset - make sure you are using \`pfm init'" >&2
-        return 3
+        return 2
     fi
     
-    echo "export PFM_HOME=\"$PFM_HOME\""
-    echo "export PFM_BIN=\"$PFM_BIN\""
-    echo "export PFM_LIBEXEC=\"$PFM_LIBEXEC\""
-    echo "export PFM_SESSIONS=\"$PFM_SESSIONS\""
-    echo "PFM_SHELL=\${BASH_VERSION:+bash}\${ZSH_VERSION:+zsh}\${FISH_VERSION:+fish}"
-    echo "PFM_SHELL_INIT=1"
-    (
-        shopt -s nullglob
-        local f
-        for f in "$PFM_LIBEXEC"/*
-        do
-            \grep -Ehv "^\s*(:;|#)" "$f"
-        done
-    )
+    case "$shell" in
+        bash|zsh|sh)
+            echo "# exports supported by $shell"
+            echo "export PFM_HOME=\"$PFM_HOME\""
+            echo "export PFM_BIN=\"$PFM_BIN\""
+            echo "export PFM_LIBEXEC=\"$PFM_LIBEXEC\""
+            echo "export PFM_SESSIONS=\"$PFM_SESSIONS\""
+            echo "PFM_SHELL=$shell"
+            echo "PFM_SHELL_INIT=1"
+            ;;
+        *)
+            echo "# exports not yet supported by $shell"
+            ;;
+    esac
+
+    case "$shell" in
+        bash)
+            echo "# function shell caching supported by $shell"
+            (
+                shopt -s nullglob
+                local f
+                for f in "$PFM_LIBEXEC"/*
+                do
+                    \grep -Ehv "^\s*(:;|#)" "$f"
+                done
+            )
+            ;;
+        *)
+            echo "# function shell caching not yet supported by $shell"
+            ;;
+    esac
 
     local folder
     for folder in "$PFM_HOME" "$PFM_SESSIONS"
