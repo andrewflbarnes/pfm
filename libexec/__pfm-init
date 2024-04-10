@@ -9,6 +9,12 @@ __pfm-init() {
         return 1
     fi
     shift
+
+    if ! [[ "$PFM_SHELL" =~ bash ]]
+    then
+        echo "pfm init is only supported on bash, don't worry, everything will still work :)" >&2
+        return
+    fi
     
     if [ -z "$1" ]
     then

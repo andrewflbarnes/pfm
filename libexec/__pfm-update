@@ -33,7 +33,7 @@ __pfm-update() {
 
     if [[ "1" == "$PFM_FILE_EXEC" ]]
     then
-        if [[ "$(type -t pfm 2>/dev/null)" == "function" ]]
+        if [[ "1" == "$PFM_SHELL_INIT" ]]
         then
             echo "Run the below to update your shell"
             # shellcheck disable=SC2016
@@ -42,7 +42,9 @@ __pfm-update() {
         return
     fi
 
+    echo -n "Updating shell..."
     eval "$(pfm init -)"
+    echo "done"
 }
 
 :; __pfm-update "$@"
