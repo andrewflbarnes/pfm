@@ -1,17 +1,20 @@
 #!/usr/bin/env bash
 
+:; export PS4_PADDING="                                "
+:; export PS4='+ $(basename ${BASH_SOURCE[0]}):${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-$(basename ${BASH_SOURCE[0]} | wc -c)-1))} '
 :; [[ "$PFM_DEBUG" == 1 ]] && set -x
 
 :; export PFM_HOME; PFM_HOME="${PFM_HOME:-$HOME/.pfm}"
 :; export PFM_SESSIONS; PFM_SESSIONS="${PFM_SESSIONS:-$PFM_HOME/sessions}"
 :; export PFM_EXEC; PFM_EXEC=$(dirname "$(realpath "$0")") || { echo "Cannot resolve exec path from \"$0\"" >&2; exit 1; }
+:; mkdir -p "$PFM_SESSIONS"
 
 pfm() {
     (
         if [[ "$PFM_DEBUG" == 1 ]]
         then
-            export PS4_PADDING="                            "
-            export PS4='+ ${BASH_SOURCE[0]}:${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-${#BASH_SOURCE[0]}))} '
+            export PS4_PADDING="                                "
+            export PS4='+ $(basename ${BASH_SOURCE[0]}):${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-$(basename ${BASH_SOURCE[0]} | wc -c)-1))} '
             set -x
             export PFM_DEBUG
             export SHELLOPTS
