@@ -20,19 +20,29 @@ __pfm-update() {
             return 2
         fi
 
-        git -C "$PFM_HOME" pull
-        return $?
-    fi
-
+        git -C "$PFM_HOME" pull || return $?
     # Not distributed through brew so not enabled
-    #if type -t brew &>/dev/null && [[ "$(realpath "$(which pfm)")" =~ ^"$(brew --cellar)"/pfm ]]
+    #elif type -t brew &>/dev/null && [[ "$(realpath "$(which pfm)")" =~ ^"$(brew --cellar)"/pfm ]]
     #then
     #    brew upgrade pfm
     #    return $?
-    #fi
-    
-    echo "PFM updates are not supported by your installation method :(" >&2
-    return 3
+    else
+        echo "PFM updates are not supported by your installation method :(" >&2
+        return 3
+    fi
+
+    if [[ "1" == "$PFM_FILE_EXEC" ]]
+    then
+        if [[ "$(type -t pfm 2>/dev/null)" == "function" ]]
+        then
+            echo "Run the below to update your shell"
+            # shellcheck disable=SC2016
+            echo 'eval "$(pfm init -)"'
+        fi
+        return
+    fi
+
+    eval "$(pfm init -)"
 }
 
 :; __pfm-update "$@"

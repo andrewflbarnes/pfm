@@ -7,10 +7,14 @@
 :; export PFM_HOME; PFM_HOME="${PFM_HOME:-$HOME/.pfm}"
 :; export PFM_SESSIONS; PFM_SESSIONS="${PFM_SESSIONS:-$PFM_HOME/sessions}"
 :; mkdir -p "$PFM_SESSIONS"
+
 # Ignore symlinks etc. for PFM_BIN so we know the actual callpoint
 :; export PFM_BIN; PFM_BIN=$(cd "$(dirname "$0")" && pwd) || { echo "Cannot resolve pfm bin path from \"$0\"" >&2; exit 1; }
 :; export PFM_LIBEXEC; PFM_LIBEXEC=$(realpath "$(dirname "$PFM_BIN")"/libexec) || { echo "Cannot resolve pfm libexec path from \"$0\"" >&2; exit 1; }
 :; export PATH="$PFM_LIBEXEC:$PATH"
+
+# The below acts as a marker so we can detect shell vs file invocations
+:; export PFM_FILE_EXEC=1
 
 pfm() {
     (
