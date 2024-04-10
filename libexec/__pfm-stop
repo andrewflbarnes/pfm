@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# META:HELP 7:stop a port forwarding session
+
 __pfm-stop() {
     if [[ "$1" != "stop" ]]
     then

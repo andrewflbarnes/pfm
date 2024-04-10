@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# META:HELP 2:initialise pfm in the current shell
+
 __pfm-init() {
     if [[ "$1" != "init" ]]
     then

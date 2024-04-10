@@ -1,15 +1,30 @@
 #!/usr/bin/env bash
 
+# META:HELP 1:show this help
+
 __pfm-help() {
     echo "Usage: pfm cmd [option...]"
     echo
     echo "Commands:"
-    echo " - help     : show this help"
-    echo " - init     : initialise your shell"
-    echo " - list     : list running port forwards"
-    echo " - local    : create a local port forward"
-    echo " - stop     : stop a port forward"
-    echo " - doctor   : diagnostics"
+    (
+        shopt -s nullglob
+        local f
+        for f in "$PFM_EXEC"/__pfm-*
+        do
+            local cmd; cmd=$(basename "$f" | cut -c 7-)
+            local help; help=$(sed -n '/^# META:HELP/{s/.*META:HELP [0-9]\{1,\}://;p;}' "$f")
+            help=${help:-"pfm $cmd"}
+            local pri; pri=$(sed -n '/^# META:HELP/{s/.*META:HELP \([0-9]\{1,\}\):.*/\1/;p;}' "$f")
+            pri=${pri:-5}
+            echo "$pri" "$cmd" "$help"
+        done \
+          | sort -n \
+          | cut -f 2- -d ' ' \
+          | awk '{
+              $1 = sprintf(" - %-10s :", $1);
+              print;
+          }'
+    )
 }
 
 :; __pfm-help "$@"

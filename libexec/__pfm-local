@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# META:HELP 6:forward a local port to a remote host
+
 __pfm-local() {
     if [[ "$1" != "local" ]]
     then

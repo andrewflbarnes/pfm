@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# META:HELP 9:show the current pfm home folder
+
 __pfm-home() {
   if [[ "$1" != "home" ]]
   then

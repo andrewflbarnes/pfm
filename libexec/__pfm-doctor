@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# META:HELP 10:diagnostics
+
 __pfm-doctor() {
     if [[ "$1" != "doctor" ]]
     then
