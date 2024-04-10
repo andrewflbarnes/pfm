@@ -18,20 +18,21 @@ __pfm-init() {
         return
     fi
     
-    if [ -z "$PFM_EXEC" ]
+    if [ -z "$PFM_LIBEXEC" ]
     then
         echo "pfm exec path unset - make sure you are using \`pfm init'" >&2
         return 2
     fi
     
     echo "export PFM_HOME=\"$PFM_HOME\""
-    echo "export PFM_EXEC=\"$PFM_EXEC\""
+    echo "export PFM_BIN=\"$PFM_BIN\""
+    echo "export PFM_LIBEXEC=\"$PFM_LIBEXEC\""
     echo "export PFM_SESSIONS=\"$PFM_SESSIONS\""
     echo "export PFM_SHELL_INIT=1"
     (
         shopt -s nullglob
         local f
-        for f in "$PFM_EXEC"/*
+        for f in "$PFM_LIBEXEC"/*
         do
             \grep -Ehv "^\s*(:;|#)" "$f"
         done

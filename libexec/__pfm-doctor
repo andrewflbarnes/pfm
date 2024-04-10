@@ -19,9 +19,36 @@ __pfm-doctor() {
 
     echo
     echo "Environment"
-    echo "PFM_EXEC     : $PFM_EXEC"
     echo "PFM_HOME     : $PFM_HOME"
     echo "PFM_SESSIONS : $PFM_SESSIONS"
+    echo "PFM_BIN      : $PFM_BIN"
+    echo "PFM_LIBEXEC  : $PFM_LIBEXEC"
+
+    echo
+    echo "PATH info"
+    echo -n "PFM_BIN on path                : "
+    if [[ "$PATH" =~ (^|:)"$PFM_BIN"(:|$) ]]
+    then
+        echo "Yes"
+    else
+        echo "No"
+    fi
+
+    echo -n "PFM_LIBEXEC on path            : "
+    if [[ "$PATH" =~ (^|:)"$PFM_LIBEXEC"(:|$) ]]
+    then
+        echo "Yes"
+    else
+        echo "No"
+    fi
+
+    echo -n "PFM_LIBEXEC is before PFM_BIN  : "
+    if [[ "$PATH" =~ (^|:)"$PFM_LIBEXEC":(.*:)?"$PFM_BIN"(:|$) ]]
+    then
+        echo "Yes"
+    else
+        echo "No"
+    fi
 
     if [ -n "$PFM_SESSIONS" ] && [ -d "$PFM_SESSIONS" ]
     then
