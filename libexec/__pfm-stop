@@ -57,7 +57,7 @@ __pfm-stop() {
         return 3
     fi
 
-    echo -n "Stopping session at $session_socket..."
+    echo -n "Stopping session at $session_socket ..."
 
     if ! ssh -S "$session_socket" -O exit "" &>/dev/null
     then
