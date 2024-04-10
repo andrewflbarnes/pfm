@@ -18,7 +18,6 @@
 
 pfm() {
     (
-        export PFM_SHELL; PFM_SHELL=$(ps -o comm= $PPID)
         if [[ "$PFM_DEBUG" == 1 ]]
         then
             export PS4_PADDING="                                "

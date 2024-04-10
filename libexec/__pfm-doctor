@@ -10,7 +10,7 @@ __pfm-doctor() {
     fi
     shift
 
-    if ! [[ "$(type -t pfm)" == "function" ]]
+    if [[ "1" != "$PFM_SHELL_INIT" ]]
     then
         echo "pfm not initialised in this shell, see \`pfm init'"
     else
@@ -23,6 +23,7 @@ __pfm-doctor() {
     echo "PFM_SESSIONS : $PFM_SESSIONS"
     echo "PFM_BIN      : $PFM_BIN"
     echo "PFM_LIBEXEC  : $PFM_LIBEXEC"
+    echo "PFM_SHELL    : $PFM_SHELL"
 
     echo
     echo "PATH info"

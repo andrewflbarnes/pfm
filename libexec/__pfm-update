@@ -31,20 +31,16 @@ __pfm-update() {
         return 3
     fi
 
-    if [[ "1" == "$PFM_FILE_EXEC" ]]
+    if [ -n "$PFM_SHELL" ]
     then
-        if [[ "1" == "$PFM_SHELL_INIT" ]]
-        then
-            echo "Run the below to update your shell"
-            # shellcheck disable=SC2016
-            echo 'eval "$(pfm init -)"'
-        fi
-        return
+        echo -n "Updating shell..."
+        eval "$(pfm init "$PFM_SHELL")"
+        echo "done"
+    else
+        echo "If you are running in a supported shell you can re-initialise with"
+        # shellcheck disable=SC2016
+        echo 'eval "$(pfm init <shell>)"'
     fi
-
-    echo -n "Updating shell..."
-    eval "$(pfm init -)"
-    echo "done"
 }
 
 :; __pfm-update "$@"

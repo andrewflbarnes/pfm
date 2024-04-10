@@ -10,31 +10,34 @@ __pfm-init() {
     fi
     shift
 
-    if ! [[ "$PFM_SHELL" =~ bash ]]
-    then
-        echo "pfm init is only supported on bash, don't worry, everything will still work :)" >&2
-        return
-    fi
-    
     if [ -z "$1" ]
     then
-        echo "Run the below in your shell and add it your shell rc file"
+        echo "Run the below in your shell and add it your shell rc file."
+        echo "Supported shells: bash"
         # shellcheck disable=SC2016
-        echo 'eval "$(pfm init -)"'
+        echo 'eval "$(pfm init <shell>)"'
         return
     fi
-    
+
+    if [[ "bash" != "$1" ]]
+    then
+        echo "Unsupported shell for init: $1" >&2
+        echo "Supported shells: bash" >&2
+        return 2
+    fi
+
     if [ -z "$PFM_LIBEXEC" ]
     then
         echo "pfm exec path unset - make sure you are using \`pfm init'" >&2
-        return 2
+        return 3
     fi
     
     echo "export PFM_HOME=\"$PFM_HOME\""
     echo "export PFM_BIN=\"$PFM_BIN\""
     echo "export PFM_LIBEXEC=\"$PFM_LIBEXEC\""
     echo "export PFM_SESSIONS=\"$PFM_SESSIONS\""
-    echo "export PFM_SHELL_INIT=1"
+    echo "PFM_SHELL=\${BASH_VERSION:+bash}\${ZSH_VERSION:+zsh}\${FISH_VERSION:+fish}"
+    echo "PFM_SHELL_INIT=1"
     (
         shopt -s nullglob
         local f
@@ -50,7 +53,7 @@ __pfm-init() {
         if ! mkdir -p "$folder"
         then
             echo "Cannot create folder \"$folder\"" >&2
-            return 3
+            return 4
         fi
     done
 }
