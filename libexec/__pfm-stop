@@ -40,7 +40,7 @@ __pfm-stop() {
             do
                 if [ -S "$f" ]
                 then
-                    __pfm-stop stop - "$f" || err=4
+                    __pfm-stop stop - "$f" || err=3
                 fi
             done
             return $err
@@ -50,26 +50,37 @@ __pfm-stop() {
 
     local session_socket; session_socket="$(realpath "$session_file")"
 
+    if ! [ -e "$session_socket" ]
+    then
+        echo -n "Cleaning up disconnected session at $session_file ..."
+        if ! rm -f "$session_file" >/dev/null
+        then
+            echo "Failed to remove session file" >&2
+            return 4
+        fi
+        echo "Done"
+        return
+    fi
+
     if ! [ -S "$session_socket" ]
     then
         # TODO we should emit the conn details, might need to destructure session_file
         echo "No port forwarding found for $session_file" >&2
-        return 3
+        return 5
     fi
 
-    echo -n "Stopping session at $session_socket ..."
-
+    echo -n "Stopping session at $session_file ..."
     if ! ssh -S "$session_socket" -O exit "" &>/dev/null
     then
         echo "Failed" >&2
-        return 4
+        return 6
     fi
     echo "Done"
 
     if ! rm  -f "$session_file"
     then
         echo "Failed to remove session file" >&2
-        return 5
+        return 7
     fi
 }
 
