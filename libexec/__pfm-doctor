@@ -74,7 +74,10 @@ __pfm-doctor() {
                 fi
 
                 local state="Connected   "
-                if ! [ -S "$s" ]
+                if ! [ -e "$s" ] && [ -L "$s" ]
+                then
+                    state="Disconnected"
+                elif ! [ -S "$s" ]
                 then
                     state="NotSocket   "
                 elif ! ssh -S "$s" -O check "" &>/dev/null
