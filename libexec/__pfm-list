@@ -21,10 +21,25 @@ __pfm-list() {
     \cd "$PFM_SESSIONS" || return $?
     (
         local last_hosttype
+        local first=1
         shopt -s nullglob
         local s
         for s in "$PFM_SESSIONS"/*
         do
+          local fname; fname=$(basename "$s")
+            read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
+            if [[ "$last_hosttype" != "${ssh_host} [$ftype]" ]]
+            then
+                last_hosttype="${ssh_host} [$ftype]"
+                if [[ "$first" == 1 ]]
+                then
+                    first=0
+                else
+                    echo
+                fi
+                echo "$last_hosttype"
+            fi
+
             local s_real; s_real=$(realpath "$s")
             local state="Connected   "
             if ! [ -e "$s_real" ] && [ -L "$s" ]
@@ -36,14 +51,6 @@ __pfm-list() {
             elif ! ssh -S "$s_real" -O check "" &>/dev/null
             then
                 state="Disconnected"
-            fi
-
-            local fname; fname=$(basename "$s")
-            read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
-            if [[ "$last_hosttype" != "${ssh_host}[$ftype]" ]]
-            then
-                last_hosttype="${ssh_host}[$ftype]"
-                echo "$last_hosttype"
             fi
 
             echo -n "$state : "
@@ -67,8 +74,11 @@ __pfm-list() {
                         ;;
                 esac
             fi
-            echo "             > $s"
-            echo "             > $(realpath "$s")"
+            if [[ "$verbose" == "1" ]]
+            then
+                echo "             > $s"
+                echo "             > $(realpath "$s")"
+            fi
         done
     )
     return $?
