@@ -73,14 +73,15 @@ __pfm-doctor() {
                     first=0
                 fi
 
+                local s_real; s_real=$(realpath "$s")
                 local state="Connected   "
-                if ! [ -e "$s" ] && [ -L "$s" ]
+                if ! [ -e "$s_real" ] && [ -L "$s" ]
                 then
                     state="Disconnected"
-                elif ! [ -S "$s" ]
+                elif ! [ -S "$s_real" ]
                 then
                     state="NotSocket   "
-                elif ! ssh -S "$s" -O check "" &>/dev/null
+                elif ! ssh -S "$s_real" -O check "" &>/dev/null
                 then
                     state="Disconnected"
                 fi

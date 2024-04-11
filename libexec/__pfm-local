@@ -27,7 +27,7 @@ __pfm-local() {
     
     if [ -z "$rport" ]
     then
-        echo "Usage: pfm local <local port> <ssh host> [remote host [remote port]]" >&2
+        echo "Usage: pfm local <local port> <ssh host> { <ssh host port> | <remote host> <remote port> }" >&2
         return 2
     fi
 

@@ -25,7 +25,7 @@ __pfm-list() {
         local s
         for s in "$PFM_SESSIONS"/*
         do
-            local s_real=$(realpath "$s")
+            local s_real; s_real=$(realpath "$s")
             local state="Connected   "
             if ! [ -e "$s_real" ] && [ -L "$s" ]
             then

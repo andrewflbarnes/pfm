@@ -27,7 +27,7 @@ __pfm-remote() {
     
     if [ -z "$forward_port" ]
     then
-        echo "Usage: pfm remote <ssh host> <ssh port> [forward host [forward port]]" >&2
+        echo "Usage: pfm remote <ssh host> <ssh port> { <local port> | <forward host> <forward port> }" >&2
         return 2
     fi
 

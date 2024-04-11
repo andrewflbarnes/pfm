@@ -13,7 +13,11 @@ __pfm-stop() {
     local type=$1
     local session_file
 
-    if [[ "-" == "$type" ]]
+    if  [ -z "$type" ]
+    then
+        echo "Usage: pfm stop { - <session file> | all }"
+        return
+    elif [[ "-" == "$type" ]]
     then
         session_file=$2
 
