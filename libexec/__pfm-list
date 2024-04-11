@@ -18,45 +18,57 @@ __pfm-list() {
             ;;
     esac
 
+    \cd "$PFM_SESSIONS" || return $?
     (
-        \cd "$PFM_SESSIONS" || return $?
+        local last_hosttype
         shopt -s nullglob
         local s
-        for s in *
+        for s in "$PFM_SESSIONS"/*
         do
-            echo "$s=$(realpath "$s")"
-        done \
-        | \awk -v verbose="$verbose" -v folder="$PFM_SESSIONS" '
-            BEGIN {
-                FS="="
-                last_ssh_host="dummy"
-                last_type="dummy"
-            }
-            $1 != last_ssh_host || $2 != last_type {
-                last_ssh_host=$1
-                last_type=$2
-                print $1 "[" $2 "]"
-            }
-            {
-                if ($2 == "local") {
-                    if ($4 == "localhost" || $4 == "127.0.0.1" || $4 == "::1") {
-                        print "- localhost:" $3 " -> " $1 ":" $5
-                    } else {
-                        print "- localhost:" $3 " -> " $1 " -> " $4 ":" $5
-                    }
-                } else {
-                    if ($4 == "localhost" || $4 == "127.0.0.1" || $4 == "::1") {
-                        print "- " $1 ":" $3 " -> localhost:" $5
-                    } else {
-                        print "- " $1 ":" $3 " -> localhost -> " $4 ":" $5
-                    }
-                }
-                if (verbose) {
-                    printf "  link : %s/%s=%s=%s=%s=%s\n", folder, $1, $2, $3, $4, $5
-                    printf "  real : %s\n", $6
-                }
-            }
-        '
+            local state="Connected   "
+            if ! [ -e "$s" ] && [ -L "$s" ]
+            then
+                state="Disconnected"
+            elif ! [ -S "$s" ]
+            then
+                state="NotSocket   "
+            elif ! ssh -S "$s" -O check "" &>/dev/null
+            then
+                state="Disconnected"
+            fi
+
+            local fname; fname=$(basename "$s")
+            read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
+            if [[ "$last_hosttype" != "${ssh_host}[$ftype]" ]]
+            then
+                last_hosttype="${ssh_host}[$ftype]"
+                echo "$last_hosttype"
+            fi
+
+            echo -n "$state : "
+            if [[ "$ftype" == "local" ]]
+            then
+                case "$to_host" in
+                    localhost|127.0.0.1|::1)
+                        echo "localhost:$from_port -> $ssh_host:$to_port"
+                        ;;
+                    *)
+                        echo "localhost:$from_port -> $ssh_host -> $to_host:$to_port"
+                        ;;
+                esac
+            else
+                case "$to_host" in
+                    localhost|127.0.0.1|::1)
+                        echo "$ssh_host:$from_port -> localhost:$to_port"
+                        ;;
+                    *)
+                        echo "$ssh_host:$from_port -> localhost -> $to_host:$to_port"
+                        ;;
+                esac
+            fi
+            echo "             > $s"
+            echo "             > $(realpath "$s")"
+        done
     )
     return $?
 }
