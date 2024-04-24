@@ -60,35 +60,9 @@ __pfm-doctor() {
 
     if [ -n "$PFM_SESSIONS" ] && [ -d "$PFM_SESSIONS" ]
     then
-        (
-            local first=1
-            shopt -s nullglob
-            local s
-            for s in "$PFM_SESSIONS"/*
-            do
-                if [[ "$first" == "1" ]]
-                then
-                    echo
-                    echo "Sessions"
-                    first=0
-                fi
-
-                local s_real; s_real=$(realpath "$s")
-                local state="Connected   "
-                if ! [ -e "$s_real" ] && [ -L "$s" ]
-                then
-                    state="Disconnected"
-                elif ! [ -S "$s_real" ]
-                then
-                    state="NotSocket   "
-                elif ! ssh -S "$s_real" -O check "" &>/dev/null
-                then
-                    state="Disconnected"
-                fi
-                echo "$state : $s"
-                echo "             > $(realpath "$s")"
-            done
-        )
+        echo
+        echo "Sessions"
+        __pfm-list list -v
     fi
 }
 

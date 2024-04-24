@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+__pfm-conninfo() {
+    if [[ "$1" != "conninfo" ]]
+    then
+        echo "Must be run as \`pfm conninfo'" >&2
+        return 1
+    fi
+    shift
+
+    local connfile=$1
+    if [[ -z "$connfile" ]]
+    then
+        echo "Usage: pfm conninfo <connfile>" >&2
+        return 2
+    fi
+
+    local fname; fname=$(basename "$connfile")
+    read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
+
+    local s_real; s_real=$(realpath "$connfile")
+    local state="Connected"
+    if ! [ -e "$s_real" ] && [ -L "$connfile" ]
+    then
+        state="Disconnected"
+    elif ! [ -S "$s_real" ]
+    then
+        state="NotSocket"
+    elif ! ssh -S "$s_real" -O check "" &>/dev/null
+    then
+        state="Disconnected"
+    fi
+
+    local desc
+    if [[ "$ftype" == "local" ]]
+    then
+        case "$to_host" in
+            localhost|127.0.0.1|::1)
+                desc="localhost:$from_port -> $ssh_host:$to_port"
+                ;;
+            *)
+                desc="localhost:$from_port -> $ssh_host -> $to_host:$to_port"
+                ;;
+        esac
+    else
+        case "$to_host" in
+            localhost|127.0.0.1|::1)
+                desc="$ssh_host:$from_port -> localhost:$to_port"
+                ;;
+            *)
+                desc="$ssh_host:$from_port -> localhost -> $to_host:$to_port"
+                ;;
+        esac
+    fi
+    echo "$state" "$ssh_host" "$ftype" "$from_port" "$to_host" "$to_port" "$desc"
+}
+
+
+:; __pfm-conninfo "$@"

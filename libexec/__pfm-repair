@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+# META-HELP:6:repair local and remote sessions
+
+__pfm-repair() {
+    if [[ "$1" != "repair" ]]
+    then
+        echo "Must be run as \`pfm repair'" >&2
+        return 1
+    fi
+    shift
+
+    # TODO allow repair of single conns
+
+    \cd "$PFM_SESSIONS" || return $?
+    (
+        shopt -s nullglob
+        local s
+        for s in "$PFM_SESSIONS"/*
+        do
+            read -r state ssh_host ftype from_port to_host to_port desc <<< "$(__pfm-conninfo conninfo "$s")"
+
+            if [[ "$state" == "Connected" ]]
+            then
+                continue
+            elif [[ "$state" == "NotSocket" ]]
+            then
+                local s_real; s_real=$(realpath "$s")
+                echo "$s -> $s_real not a socket, requires manual repair" >&2
+                continue
+            fi
+
+            echo "$state $ftype connection $desc, repairing..."
+
+            rm -f "$s" "$s_real"
+
+            if [[ "$ftype" == "local" ]]
+            then
+                if ! __pfm-local local "$from_port" "$ssh_host" "$to_host" "$to_port"
+                then
+                    echo "Failed to repair local connection $desc ($s)" >&2
+                fi
+            else
+                if ! __pfm-remote remote "$ssh_host" "$from_port" "$to_host" "$to_port"
+                then
+                    echo "Failed to repair remote connection $desc ($s)" >&2
+                fi
+            fi
+        done
+    )
+    return $?
+}
+
+
+:; __pfm-repair "$@"

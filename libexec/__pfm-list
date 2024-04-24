@@ -26,8 +26,8 @@ __pfm-list() {
         local s
         for s in "$PFM_SESSIONS"/*
         do
-          local fname; fname=$(basename "$s")
-            read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
+            read -r state ssh_host ftype from_port to_host to_port desc <<< "$(__pfm-conninfo conninfo "$s")"
+            : "$from_port" "$to_host" "$to_port" # ignored
             if [[ "$last_hosttype" != "${ssh_host} [$ftype]" ]]
             then
                 last_hosttype="${ssh_host} [$ftype]"
@@ -40,40 +40,7 @@ __pfm-list() {
                 echo "$last_hosttype"
             fi
 
-            local s_real; s_real=$(realpath "$s")
-            local state="Connected   "
-            if ! [ -e "$s_real" ] && [ -L "$s" ]
-            then
-                state="Disconnected"
-            elif ! [ -S "$s_real" ]
-            then
-                state="NotSocket   "
-            elif ! ssh -S "$s_real" -O check "" &>/dev/null
-            then
-                state="Disconnected"
-            fi
-
-            echo -n "$state : "
-            if [[ "$ftype" == "local" ]]
-            then
-                case "$to_host" in
-                    localhost|127.0.0.1|::1)
-                        echo "localhost:$from_port -> $ssh_host:$to_port"
-                        ;;
-                    *)
-                        echo "localhost:$from_port -> $ssh_host -> $to_host:$to_port"
-                        ;;
-                esac
-            else
-                case "$to_host" in
-                    localhost|127.0.0.1|::1)
-                        echo "$ssh_host:$from_port -> localhost:$to_port"
-                        ;;
-                    *)
-                        echo "$ssh_host:$from_port -> localhost -> $to_host:$to_port"
-                        ;;
-                esac
-            fi
+            printf "%-12s : %s\n" "$state" "$desc"
             if [[ "$verbose" == "1" ]]
             then
                 echo "             > $s"
