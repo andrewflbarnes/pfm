@@ -16,6 +16,14 @@ __pfm-doctor() {
     else
         echo "pfm is initialised in this shell :)"
     fi
+    (
+        shopt -s nullglob
+        for f in "$PFM_LIBEXEC"/*
+        do
+            local basef; basef="$(basename "$f")"
+            printf "%-20s : %s\n" "$basef" "$(type -t "$basef")"
+        done
+    )
 
     echo
     echo "Environment"
