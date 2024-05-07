@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+# META-HELP:8:run commands from an obey file
+
+__pfm-obey() {
+    if [[ "$1" != "obey" ]]
+    then
+        echo "Must be run as \`pfm obey'" >&2
+        return 1
+    fi
+    shift
+
+    local obeyfile=$1
+    if [ -z "$obeyfile" ]
+    then
+        local of
+        for of in .pfmobey "$HOME"/.pfmobey
+        do
+            if [ -f "$of" ]
+            then
+                obeyfile=$of
+                break
+            fi
+        done
+
+        if [ -z "$obeyfile" ]
+        then
+            echo "No default obeyfiles found" >&2
+            return 2
+        fi
+    elif ! [ -f "$obeyfile" ]
+    then
+        echo "$obeyfile does not exist" >&2
+        return 3
+    fi
+
+    while read -r command args
+    do
+        # shellcheck disable=SC2086
+        eval "__pfm-$command" "$command" $args
+    done < "$obeyfile"
+}
+
+:; __pfm-obey "$@"
