@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# META-HELP:7:cleanup disconnected sessions
+
+__pfm-clean() {
+    if [[ "$1" != "clean" ]]
+    then
+        echo "Must be run as \`pfm clean'" >&2
+        return 1
+    fi
+    shift
+
+    \cd "$PFM_SESSIONS" || return $?
+    (
+        shopt -s nullglob
+        local s
+        for s in "$PFM_SESSIONS"/*
+        do
+            read -r state ssh_host ftype from_port to_host to_port desc <<< "$(__pfm-conninfo conninfo "$s")"
+
+            if [[ "$state" == "Disconnected" ]]
+            then
+                __pfm-stop stop - "$s" || :
+            fi
+        done
+    )
+}
+
+
+:; __pfm-clean "$@"
