@@ -39,25 +39,26 @@ __pfm-local() {
         return 3
     fi
 
+    # create the link first as this is what we use to check for existing sessions and connection attempts
+    if ! ln -s "$session_socket" "$session_file"
+    then
+        echo "Failed to link unix socket for local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
+        [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
+        return 6
+    fi
+
     if ! ssh -M -S "$session_socket" -fnNT "$ssh_host"
     then
         echo "Failed to establish connection to $ssh_host" >&2
-        __pfm-stop stop - "$session_socket" || :
+        [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
         return 4
     fi
 
     if ! ssh -S "$session_socket" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
     then
         echo "Failed to forward local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
-        __pfm-stop stop - "$session_socket" || :
+        [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
         return 5
-    fi
-
-    if ! ln -s "$session_socket" "$session_file"
-    then
-        echo "Failed to link unix socket for local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
-        __pfm-stop stop - "$session_socket" || :
-        return 6
     fi
 }
 

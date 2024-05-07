@@ -36,15 +36,18 @@ __pfm-repair() {
 
             if [[ "$ftype" == "local" ]]
             then
-                if ! __pfm-local local "$from_port" "$ssh_host" "$to_host" "$to_port"
+                if ! PFM_NOCLEANUP=1 __pfm-local local "$from_port" "$ssh_host" "$to_host" "$to_port"
                 then
                     echo "Failed to repair local connection $desc ($s)" >&2
                 fi
-            else
-                if ! __pfm-remote remote "$ssh_host" "$from_port" "$to_host" "$to_port"
+            elif [[ "$ftype" == "remote" ]]
+            then
+                if ! PFM_NOCLEANUP=1 __pfm-remote remote "$ssh_host" "$from_port" "$to_host" "$to_port"
                 then
                     echo "Failed to repair remote connection $desc ($s)" >&2
                 fi
+            else
+                echo "Unrecognised type \"$ftype\"" >&2
             fi
         done
     )
