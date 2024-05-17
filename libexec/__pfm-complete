@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+__pfm-complete() {
+  if [[ "$1" != "complete" ]]
+  then
+      echo "Must be run as \`pfm complete'" >&2
+      return 1
+  fi
+  shift
+
+  if [ -z "$1" ]
+  then
+    echo "Add completion to bash shells by running the below. pfm init will"
+    echo "automatically do this as required"
+    # shellcheck disable=SC2016
+    echo 'eval "$(pfm complete bash)"'
+    return
+  fi
+
+  if [[ "bash" == "$1" ]]
+  then
+    # shellcheck disable=SC2016
+    echo '_pfm() { COMPREPLY=($(pfm complete - "${COMP_WORDS[@]}")); }'
+    echo 'complete -F _pfm pfm'
+    return
+  fi
+
+  if [[ "-" != "$1" ]]
+  then
+    echo "Unknown completion operation: $1" >&2
+    return 1
+  fi
+  shift 1
+
+  if [ $# -lt 3 ]
+  then
+    (
+      shopt -s nullglob
+      \cd "$PFM_LIBEXEC" || return 1
+      local search=${2}
+      local cmd
+      for cmd in "__pfm-${search}"*
+      do
+        #echo "$cmd " >&2
+        printf "%s " "${cmd//__pfm-/}"
+      done
+    )
+  fi
+}
+
+:; __pfm-complete "$@"

@@ -58,6 +58,16 @@ __pfm-init() {
             ;;
     esac
 
+    case "$shell" in
+        bash)
+            echo "# shell completions supported by $shell"
+            __pfm-complete complete bash
+            ;;
+        *)
+            echo "# shell completions not yet supported by $shell"
+            ;;
+    esac
+
     local folder
     for folder in "$PFM_HOME" "$PFM_SESSIONS"
     do
