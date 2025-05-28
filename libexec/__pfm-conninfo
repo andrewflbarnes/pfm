@@ -18,7 +18,14 @@ __pfm-conninfo() {
     local fname; fname=$(basename "$connfile")
     read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
 
-    local s_real; s_real=$(realpath "$connfile")
+    local s_real
+    if [ -L "$connfile" ]
+    then
+        s_real=$(readlink "$connfile")
+    else
+        s_real="$connfile"
+    fi
+
     local state="Connected"
     if ! [ -e "$s_real" ] && [ -L "$connfile" ]
     then
@@ -52,7 +59,7 @@ __pfm-conninfo() {
                 ;;
         esac
     fi
-    echo "$state" "$ssh_host" "$ftype" "$from_port" "$to_host" "$to_port" "$desc"
+    echo "$state" "$ssh_host" "$ftype" "$from_port" "$to_host" "$to_port" "$s_real" "$desc"
 }
 
 

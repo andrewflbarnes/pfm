@@ -16,7 +16,7 @@ __pfm-clean() {
         local s
         for s in "$PFM_SESSIONS"/*
         do
-            read -r state ssh_host ftype from_port to_host to_port desc <<< "$(__pfm-conninfo conninfo "$s")"
+            read -r state ssh_host ftype from_port to_host to_port s_real desc <<< "$(__pfm-conninfo conninfo "$s")"
 
             if [[ "$state" == "Disconnected" ]]
             then
