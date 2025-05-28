@@ -35,6 +35,10 @@ __pfm-local() {
     local session_socket; session_socket="$PFM_SESSIONS/.l.$(cksum <<< "$session_file" | cut -f 1 -d ' ')"
     if [ -e "$session_file" ] || [ -e "$session_socket" ]
     then
+        if ! [ -e "$session_file" ]
+        then
+            ln -s "$session_socket" "$session_file" &>/dev/null || :
+        fi
         echo "Session already exists for localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
         return 3
     fi
