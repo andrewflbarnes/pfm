@@ -11,12 +11,20 @@ __pfm-list() {
     shift
 
     local verbose=0
-    case "$1" in
-        -v|--verbose|verbose|v)
+    local obeyform=0
+    while [[ "$1" == -* ]]
+    do
+      case "$1" in
+        -o|--obeyform)
+            obeyform=1
+            shift
+            ;;
+        -v|--verbose)
             verbose=1
             shift
             ;;
-    esac
+      esac
+    done
 
     \cd "$PFM_SESSIONS" || return $?
     (
@@ -37,17 +45,27 @@ __pfm-list() {
                 else
                     echo
                 fi
-                echo "$last_hosttype"
+                echo "# $last_hosttype"
             fi
 
-            printf "%-12s : %s\n" "$state" "$desc"
-            if [[ "$verbose" == "1" ]]
+            if [[ "$obeyform" == "1" ]]
             then
+              if [ "$ftype" == "local" ]
+              then
+                echo "$ftype $from_port $ssh_host $to_host $to_port"
+              else
+                echo "$ftype $ssh_host $from_port $to_host $to_port"
+              fi
+            else
+              printf "%-12s : %s\n" "$state" "$desc"
+              if [[ "$verbose" == "1" ]]
+              then
                 echo "             > $s"
                 if [[ "$s_real" != "$s" ]]
                 then
                   echo "             > $s_real"
                 fi
+              fi
             fi
         done
     )

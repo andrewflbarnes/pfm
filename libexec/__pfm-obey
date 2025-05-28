@@ -36,8 +36,11 @@ __pfm-obey() {
 
     while read -r command args
     do
+      if [ -n "$command" ] && [[ "$command" != \#* ]]
+      then
         # shellcheck disable=SC2086
         eval "__pfm-$command" "$command" $args
+      fi
     done < "$obeyfile"
 }
 
