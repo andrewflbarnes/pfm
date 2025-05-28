@@ -58,7 +58,7 @@ __pfm-local() {
         return 4
     fi
 
-    if ! ssh -S "$session_socket" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
+    if ! ${PFM_SUDO+sudo} ssh -S "$session_socket" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
     then
         echo "Failed to forward local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
         [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
