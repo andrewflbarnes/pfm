@@ -23,6 +23,10 @@ __pfm-list() {
             verbose=1
             shift
             ;;
+        *)
+            echo "Unknown option: $1" >&2
+            return 1
+            ;;
       esac
     done
 
