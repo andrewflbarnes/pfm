@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# META-HELP:7:use the com repl
+
+__pfm-com() {
+    if [[ "$1" != "com" ]]
+    then
+        echo "Must be run as \`pfm com'" >&2
+        return 1
+    fi
+    shift
+
+    echo "# Enter \"help\" for help, \"exit\" or \"quit\" to exit."
+
+    local comm
+    while read -rp "pfmcom > " comm args
+    do
+      if [[ "$comm" == "exit" || "$comm" == "quit" ]]
+      then
+        break
+      fi
+
+      if type -t "__pfm-$comm" &>/dev/null
+      then
+        eval "__pfm-$comm $comm $args"
+      else
+        eval "pfm $comm $comm $args"
+      fi
+    done
+}
+
+
+:; __pfm-com "$@"
