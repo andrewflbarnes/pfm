@@ -17,17 +17,18 @@
 :; export PFM_FILE_EXEC=1
 
 pfm() {
-    (
-        if [[ "$PFM_DEBUG" == 1 ]]
-        then
-            set -x
-            export PS4_PADDING="                                "
-            export PS4='+ $(basename "${BASH_SOURCE[0]}"):${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-$(basename "${BASH_SOURCE[0]}" | wc -c)-1))} '
-            export PFM_DEBUG
-            export SHELLOPTS
-        fi
+    if [[ "$PFM_DEBUG" == 1 ]]
+    then
+        trap "set +x; trap - RETURN INT TERM EXIT" RETURN INT TERM EXIT
+        set -x
+        PS4_PADDING="                                " \
+        PS4='+ $(basename "${BASH_SOURCE[0]}"):${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-$(basename "${BASH_SOURCE[0]}" | wc -c)-1))} ' \
+        PFM_DEBUG=${PFM_DEBUG} \
+        SHELLOPTS=$SHELLOPTS \
         __pfm_run "$@"
-    )
+    else
+        __pfm_run "$@"
+    fi
 }
 
 __pfm_run() {
