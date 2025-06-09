@@ -10,6 +10,47 @@ __pfm-stop() {
     fi
     shift
 
+  if  [[ "$1" == "completion" ]]
+  then
+    local cur prev words cword
+    _get_comp_words_by_ref -n '=' cur prev words cword
+    if [ "$cword" = 2 ]
+    then
+      local cmd
+      for cmd in "-" "all"
+      do
+        if [ -z "$cur" ] || [[ "$cmd" =~ ^$cur ]]
+        then
+          printf "%s " "$cmd"
+        fi
+      done
+      return
+    fi
+
+    if [ "$cword" = 3 ] && [[ "$prev" == "-" ]]
+    then
+      (
+        shopt -s nullglob
+        \cd "$PFM_SESSIONS" || return 1
+        _comp_complete_longopt
+        local f
+        # TODO use standard compgen tools to do this
+        # NOTE: DO NOT wrap this in quotes as it will break completion which
+        # already accounts for escaping
+        # shellcheck disable=SC2231
+        for f in ./${cur}*
+        do
+          # Ensure escape =
+          f=${f//=/\\=}
+          printf "%s " "${f:2}"
+        done
+      )
+      return
+    fi
+
+    return
+  fi
+
     local type=$1
     local session_file
 
