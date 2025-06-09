@@ -31,6 +31,13 @@ To see a list of commands just run `pfm` without any arguments.
 
 ## Notes
 
+### Ease of use
+
+`pfm` is best used with some kind of "passive" authentication to reduce the need for having to enter credentials
+manually on operations.
+
+e.g. using and id key, kerberos or an ssh agent.
+
 ### Optional init function caching
 
 The step to `eval "$(pfm init bash)"` is optional and will result in pfm functions getting cached in the shell.
