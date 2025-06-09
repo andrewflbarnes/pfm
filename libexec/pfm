@@ -12,6 +12,7 @@
 :; export PFM_BIN; PFM_BIN=$(cd "$(dirname "$0")" && pwd) || { echo "Cannot resolve pfm bin path from \"$0\"" >&2; exit 1; }
 :; export PFM_LIBEXEC; PFM_LIBEXEC=$(realpath "$(dirname "$PFM_BIN")"/libexec) || { echo "Cannot resolve pfm libexec path from \"$0\"" >&2; exit 1; }
 :; export PATH="$PFM_LIBEXEC:$PATH"
+:; export SHELLOPTS
 
 # The below acts as a marker so we can detect shell vs file invocations
 :; export PFM_FILE_EXEC=1
@@ -24,7 +25,6 @@ pfm() {
         PS4_PADDING="                                " \
         PS4='+ $(basename "${BASH_SOURCE[0]}"):${FUNCNAME[0]}:$LINENO ${PS4_PADDING:0:((${#PS4_PADDING}-${#FUNCNAME[0]}-${#LINENO}-$(basename "${BASH_SOURCE[0]}" | wc -c)-1))} ' \
         PFM_DEBUG=${PFM_DEBUG} \
-        SHELLOPTS=$SHELLOPTS \
         __pfm_run "$@"
     else
         __pfm_run "$@"
@@ -41,6 +41,19 @@ __pfm_run() {
     fi
 
     "$full_cmd" "$@"
+}
+
+# Utility function which will force commands to always defer to the libexec file
+# mainly useful for completions and initialisations which would otherwise require
+# calling twice - once to get the updated init/comp in the shell function, and a
+# second to emit/eval it
+__pfm_run_file() {
+    # Only if we are running from a shell
+    if [ "$PFM_SHELL_INIT" != "1" ]
+    then
+      echo "Warning: Force file command called in non-initialised shell pfm $*" >&2
+    fi
+    command pfm "$@"
 }
 
 :; pfm "$@"

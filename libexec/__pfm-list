@@ -10,6 +10,12 @@ __pfm-list() {
     fi
     shift
 
+    if [[ "$1" == "completion" ]]
+    then
+      # TODO
+      return
+    fi
+
     local verbose=0
     local obeyform=0
     while [[ "$1" == -* ]]

@@ -10,6 +10,11 @@ __pfm-com() {
     fi
     shift
 
+    if [[ "$1" == "completion" ]]
+    then
+      return
+    fi
+
     echo "# Enter \"help\" for help, \"exit\" or \"quit\" to exit."
 
     local comm

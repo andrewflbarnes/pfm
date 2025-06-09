@@ -3,12 +3,27 @@
 # META-HELP:2:initialise pfm in the current shell
 
 __pfm-init() {
+    if [[ "$2" == "completion" ]]
+    then
+      __pfm-init__internal "$@"
+    else
+      __pfm_run_file "$@"
+    fi
+}
+
+__pfm-init__internal() {
     if [[ "$1" != "init" ]]
     then
         echo "Must be run as \`pfm init'" >&2
         return 1
     fi
     shift
+
+    if [[ "$1" == "completion" ]]
+    then
+      # TODO
+      return
+    fi
 
     local shell=$1
 
@@ -80,4 +95,4 @@ __pfm-init() {
 }
 
 # shellcheck disable=SC2016
-:; __pfm-init "$@"
+:; __pfm-init__internal "$@"

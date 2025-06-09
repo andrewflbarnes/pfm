@@ -10,6 +10,11 @@ __pfm-update() {
     fi
     shift
 
+    if [[ "$1" == "completion" ]]
+    then
+      return
+    fi
+
     # todo might need to do something smart here to prevent issues with local dev?
 
     if [ -d "$PFM_HOME/.git" ]

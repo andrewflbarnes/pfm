@@ -10,6 +10,12 @@ __pfm-remote() {
     fi
     shift
 
+    if [[ "$1" == "completion" ]]
+    then
+      # TODO
+      return
+    fi
+
     local ssh_host=$1
     local ssh_port=$2
     local forward_host=$3

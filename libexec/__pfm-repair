@@ -10,6 +10,11 @@ __pfm-repair() {
     fi
     shift
 
+    if [[ "$1" == "completion" ]]
+    then
+      return
+    fi
+
     # TODO allow repair of single conns
 
     \cd "$PFM_SESSIONS" || return $?

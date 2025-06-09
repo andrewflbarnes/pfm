@@ -10,6 +10,11 @@ __pfm-clean() {
     fi
     shift
 
+    if [[ "$1" == "completion" ]]
+    then
+      return
+    fi
+
     \cd "$PFM_SESSIONS" || return $?
     (
         shopt -s nullglob

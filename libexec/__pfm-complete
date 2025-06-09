@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
 __pfm-complete() {
+    if [[ "$2" == "-" ]] || [[ "$2" == "completion" ]]
+    then
+      __pfm-complete__internal "$@"
+    else
+      __pfm_run_file "$@"
+    fi
+}
+
+__pfm-complete__internal() {
   if [[ "$1" != "complete" ]]
   then
       echo "Must be run as \`pfm complete'" >&2
@@ -10,13 +19,14 @@ __pfm-complete() {
 
   if  [[ "$1" == "completion" ]]
   then
-
-    if [ $# -lt 3 ]
+    local cur cword
+    _get_comp_words_by_ref -n '=' cur cword
+    if [ "$cword" = 2 ]
     then
       local cmd
       for cmd in "-" "bash"
       do
-        if [ -z "$2" ] || [[ "$cmd" =~ ^$2 ]]
+        if [ -z "$cur" ] || [[ "$cmd" =~ ^$cur ]]
         then
           printf "%s " "$cmd"
         fi
@@ -34,7 +44,6 @@ __pfm-complete() {
     return
   fi
 
-  ## TODO We always need to init this file from the file, otherwise we have to init twice to pick up changes
   if [[ "bash" == "$1" ]]
   then
     # shellcheck disable=SC2016
@@ -50,7 +59,7 @@ __pfm-complete() {
   fi
   shift 1
 
-  local words cword
+  local words
   _get_comp_words_by_ref -n "=" words cur cword;
 
   local search=${words[1]}
@@ -77,4 +86,4 @@ __pfm-complete() {
   pfm "$search" completion 2>/dev/null || return 1
 }
 
-:; __pfm-complete "$@"
+:; __pfm-complete__internal "$@"
