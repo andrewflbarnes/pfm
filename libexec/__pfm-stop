@@ -32,20 +32,10 @@ __pfm-stop() {
       (
         shopt -s nullglob
         \cd "$PFM_SESSIONS" || return 1
-        _comp_complete_longopt
-        local f
-        # TODO use standard compgen tools to do this
-        # NOTE: DO NOT wrap this in quotes as it will break completion which
-        # already accounts for escaping
-        # shellcheck disable=SC2231
-        for f in ./${cur}*
-        do
-          # Ensure escape =
-          f=${f//=/\\=}
-          printf "%s " "${f:2}"
-        done
+        compgen -A file -o filenames "$cur" \
+          | sed 's/=/\\=/g'
       )
-      return
+      return $?
     fi
 
     return
