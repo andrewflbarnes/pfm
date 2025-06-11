@@ -12,8 +12,22 @@ __pfm-list() {
 
     if [[ "$1" == "completion" ]]
     then
+      local cur prev cword
+      _get_comp_words_by_ref -n '=' cur prev cword
       # TODO
-      return
+      (
+        shopt -s nullglob
+        \cd "$PFM_SESSIONS" || return 1
+        if [ "$cword" -gt "2" ]
+        then
+          compgen -A file -o filenames "$cur" \
+            | sed 's/=/\\=/g'
+        else
+          compgen -W "-o --obeyform -v --verbose" -A file -o filenames -- "$cur" \
+            | sed 's/=/\\=/g'
+        fi
+      )
+      return $?
     fi
 
     local verbose=0
@@ -29,10 +43,6 @@ __pfm-list() {
             verbose=1
             shift
             ;;
-        *)
-            echo "Unknown option: $1" >&2
-            return 1
-            ;;
       esac
     done
 
@@ -41,8 +51,9 @@ __pfm-list() {
         local last_hosttype
         local first=1
         shopt -s nullglob
+        local ignoremarker=${1:+ignore}
         local s
-        for s in "$PFM_SESSIONS"/*
+        for s in "$PFM_SESSIONS"/"${ignoremarker}"* "$@"
         do
             read -r state ssh_host ftype from_port to_host to_port s_real desc <<< "$(__pfm-conninfo conninfo "$s")"
             : "$from_port" "$to_host" "$to_port" # ignored
