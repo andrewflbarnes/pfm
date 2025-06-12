@@ -17,6 +17,11 @@ __pfm-help() {
                 print;
             }'
     )
+    echo
+    echo "Environment modifiers"
+    echo " PFM_DEBUG           : set to 1 to show traces"
+    echo " PFM_CONNECT_TIMEOUT : (default 5) the time, in seconds, to wait for a successful ssh connection"
+
 }
 
 :; __pfm-help "$@"

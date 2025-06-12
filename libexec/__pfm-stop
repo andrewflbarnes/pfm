@@ -52,7 +52,7 @@ __pfm-stop() {
         return $?
     fi
 
-    local session_socket; session_socket="$(realpath "$session_file")"
+    local session_socket; session_socket="$(realpath "$session_file" 2>/dev/null)"
 
     if ! [ -e "$session_socket" ] && [ -L "$session_file" ]
     then

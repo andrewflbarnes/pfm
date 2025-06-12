@@ -51,14 +51,15 @@ __pfm-local() {
         return 6
     fi
 
-    if ! ssh -M -S "$session_socket" -fnNT "$ssh_host"
+    local timeout=${PFM_CONNECT_TIMEOUT:-5}
+    if ! ssh -o ConnectTimeout="$timeout" -M -S "$session_socket" -fnNT "$ssh_host"
     then
         echo "Failed to establish connection to $ssh_host" >&2
         [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
         return 4
     fi
 
-    if ! ${PFM_SUDO+sudo} ssh -S "$session_socket" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
+    if ! ${PFM_SUDO+sudo} ssh -o ConnectTimeout="$timeout" -S "$session_socket" -O forward -L "$lport:$rhost:$rport" "$ssh_host"
     then
         echo "Failed to forward local port localhost:$lport -> $ssh_host -> $rhost:$rport" >&2
         [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :

@@ -47,14 +47,15 @@ __pfm-remote() {
         return 6
     fi
 
-    if ! ssh -M -S "$session_socket" -fnNT "$ssh_host"
+    local timeout=${PFM_CONNECT_TIMEOUT:-5}
+    if ! ssh -o ConnectTimeout="$timeout" -M -S "$session_socket" -fnNT "$ssh_host"
     then
         echo "Failed to establish connection to $ssh_host" >&2
         [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
         return 4
     fi
 
-    if ! ssh -S "$session_socket" -O forward -R "$ssh_port:$forward_host:$forward_port" "$ssh_host"
+    if ! ssh -o ConnectTimeout="$timeout" -S "$session_socket" -O forward -R "$ssh_port:$forward_host:$forward_port" "$ssh_host"
     then
         echo "Failed to forward remote port $ssh_host:$ssh_port -> localhost -> $forward_host:$forward_port" >&2
         [[ 1 == "$PFM_NOCLEANUP" ]] || __pfm-stop stop - "$session_file" || :
