@@ -20,11 +20,9 @@ __pfm-list() {
         \cd "$PFM_SESSIONS" || return 1
         if [ "$cword" -gt "2" ]
         then
-          compgen -A file -o filenames "$cur" \
-            | sed 's/=/\\=/g'
+          compgen -A file -- "$cur"
         else
-          compgen -W "-o --obeyform -v --verbose" -A file -o filenames -- "$cur" \
-            | sed 's/=/\\=/g'
+          compgen -W "-o --obeyform -v --verbose" -A file -- "$cur"
         fi
       )
       return $?

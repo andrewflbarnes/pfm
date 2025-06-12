@@ -48,7 +48,7 @@ __pfm-complete__internal() {
   then
     # shellcheck disable=SC2016
     echo '_pfm() { COMPREPLY=($(pfm complete -)); }'
-    echo 'complete -F _pfm pfm'
+    echo 'complete -o filenames -F _pfm pfm'
     return
   fi
 
@@ -64,7 +64,7 @@ __pfm-complete__internal() {
 
   local search=${words[1]}
 
-  if [ "$cword" -lt 2 ]
+  if [[ "$cword" == 1 ]]
   then
     (
       shopt -s nullglob

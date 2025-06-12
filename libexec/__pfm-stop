@@ -30,10 +30,8 @@ __pfm-stop() {
     if [ "$cword" = 3 ] && [[ "$prev" == "-" ]]
     then
       (
-        shopt -s nullglob
         \cd "$PFM_SESSIONS" || return 1
-        compgen -A file -o filenames "$cur" \
-          | sed 's/=/\\=/g'
+        compgen -f -- "$cur"
       )
       return $?
     fi
