@@ -4,10 +4,9 @@ __pfm-local__completion() {
   local cur cword
   _get_comp_words_by_ref cur cword
 
-  if [[ "$cword" == 2 ]]
+  if [[ "$cword" == 3 ]]
   then
-    # TODO
-    :
+    compgen -A hostname -- "$cur"
   fi
 }
 

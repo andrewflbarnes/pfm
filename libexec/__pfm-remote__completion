@@ -6,8 +6,7 @@ __pfm-remote__completion() {
 
   if [[ "$cword" == 2 ]]
   then
-    # TODO
-    :
+    compgen -A hostname -- "$cur"
   fi
 }
 
