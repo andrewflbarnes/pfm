@@ -15,6 +15,12 @@ __pfm-conninfo() {
         return 2
     fi
 
+    if ! [[ "$connfile" =~ = ]]
+    then
+      echo "Invalid session file: $connfile" >&2
+      return 1
+    fi
+
     local fname; fname=$(basename "$connfile")
     read -r ssh_host ftype from_port to_host to_port <<< "${fname//=/ }"
 

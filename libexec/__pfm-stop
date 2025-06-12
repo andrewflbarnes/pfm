@@ -21,6 +21,12 @@ __pfm-stop() {
     then
         session_file=$2
 
+        if ! [[ "$session_file" =~ = ]]
+        then
+          echo "Invalid session file: $session_file" >&2
+          return 1
+        fi
+
         if ! [ -S "$session_file" ] && [ -S "$PFM_SESSIONS/$session_file" ]
         then
             session_file="$PFM_SESSIONS/$session_file"

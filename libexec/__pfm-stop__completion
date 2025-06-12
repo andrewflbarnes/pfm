@@ -13,7 +13,7 @@ __pfm-stop__completion() {
   if [ "$cword" = 3 ] && [[ "$prev" == "-" ]]
   then
     (
-      \cd "$PFM_SESSIONS" && compgen -f -- "$cur"
+      \cd "$PFM_SESSIONS" && compgen -f -X '!*=*' -- "$cur"
     )
     return $?
   fi

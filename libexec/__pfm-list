@@ -35,6 +35,12 @@ __pfm-list() {
         local s
         for s in "$PFM_SESSIONS"/"${ignoremarker}"* "$@"
         do
+            if ! [[ "$s" =~ = ]]
+            then
+              echo "Invalid session file: $s" >&2
+              continue
+            fi
+
             read -r state ssh_host ftype from_port to_host to_port s_real desc <<< "$(__pfm-conninfo conninfo "$s")"
             : "$from_port" "$to_host" "$to_port" # ignored
             if [[ "$last_hosttype" != "${ssh_host} [$ftype]" ]]

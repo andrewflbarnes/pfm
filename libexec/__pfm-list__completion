@@ -5,12 +5,11 @@ __pfm-list__completion() {
   _get_comp_words_by_ref cur cword
   (
     \cd "$PFM_SESSIONS" || return 1
-    if [ "$cword" -gt "2" ]
+    if [[ "$cword" == "2" ]]
     then
-      compgen -A file -- "$cur"
-    else
-      compgen -W "-o --obeyform -v --verbose" -A file -- "$cur"
+      compgen -W "-o --obeyform -v --verbose" -- "$cur"
     fi
+    compgen -f -X '!*=*' -- "$cur"
   )
 }
 
