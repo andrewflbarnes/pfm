@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+__pfm-complete__completion() {
+  local cur cword
+  _get_comp_words_by_ref cur cword
+
+  if [ "$cword" = 2 ]
+  then
+    compgen -W "bash" -- "$cur"
+  fi
+}
+
+:; __pfm-complete__completion
+
+

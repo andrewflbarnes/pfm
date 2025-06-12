@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+__pfm-stop__completion() {
+  local cur prev cword
+  _get_comp_words_by_ref cur prev cword
+
+  if [ "$cword" = 2 ]
+  then
+    compgen -W "- all" -- "$cur"
+    return $?
+  fi
+
+  if [ "$cword" = 3 ] && [[ "$prev" == "-" ]]
+  then
+    (
+      \cd "$PFM_SESSIONS" && compgen -f -- "$cur"
+    )
+    return $?
+  fi
+}
+
+:; __pfm-stop__completion
+
+

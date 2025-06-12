@@ -8,12 +8,6 @@ __pfm-conninfo() {
     fi
     shift
 
-    if [[ "$1" == "completion" ]]
-    then
-      # TODO
-      return
-    fi
-
     local connfile=$1
     if [[ -z "$connfile" ]]
     then

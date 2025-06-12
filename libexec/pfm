@@ -34,7 +34,7 @@ pfm() {
 __pfm_run() {
     local cmd=${1:-help}
     local full_cmd="__pfm-${cmd}"
-    if ! type -t "$full_cmd" &>/dev/null
+    if [[ "$cmd" =~ _ ]] || ! type -t "$full_cmd" &>/dev/null
     then
         echo "Unrecognised command: $cmd" >&2
         return 1

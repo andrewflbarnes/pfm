@@ -10,12 +10,6 @@ __pfm-local() {
     fi
     shift
 
-    if [[ "$1" == "completion" ]]
-    then
-      # TODO
-      return
-    fi
-
     local lport=$1
     local ssh_host=$2
     local rhost=$3

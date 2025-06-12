@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+__pfm-obey__completion() {
+  local cur cword
+  _get_comp_words_by_ref cur cword
+
+  if [[ "$cword" == 2 ]]
+  then
+    # TODO
+    :
+  fi
+}
+
+:; __pfm-obey__completion
+
+

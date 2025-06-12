@@ -19,12 +19,6 @@ __pfm-init__internal() {
     fi
     shift
 
-    if [[ "$1" == "completion" ]]
-    then
-      # TODO
-      return
-    fi
-
     local shell=$1
 
     if [ -z "$shell" ]

@@ -10,11 +10,6 @@ __pfm-home() {
   fi
   shift
 
-  if [[ "$1" == "completion" ]]
-  then
-    return
-  fi
-
   if [ -z "$PFM_HOME" ]
   then
     echo "PFM_HOME is not set" >&2

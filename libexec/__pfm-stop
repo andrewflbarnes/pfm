@@ -10,35 +10,6 @@ __pfm-stop() {
     fi
     shift
 
-  if  [[ "$1" == "completion" ]]
-  then
-    local cur prev cword
-    _get_comp_words_by_ref -n '=' cur prev cword
-    if [ "$cword" = 2 ]
-    then
-      local cmd
-      for cmd in "-" "all"
-      do
-        if [ -z "$cur" ] || [[ "$cmd" =~ ^$cur ]]
-        then
-          printf "%s " "$cmd"
-        fi
-      done
-      return
-    fi
-
-    if [ "$cword" = 3 ] && [[ "$prev" == "-" ]]
-    then
-      (
-        \cd "$PFM_SESSIONS" || return 1
-        compgen -f -- "$cur"
-      )
-      return $?
-    fi
-
-    return
-  fi
-
     local type=$1
     local session_file
 

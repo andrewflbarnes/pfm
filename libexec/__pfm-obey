@@ -10,12 +10,6 @@ __pfm-obey() {
     fi
     shift
 
-    if [[ "$1" == "completion" ]]
-    then
-      # TODO
-      return
-    fi
-
     local obeyfile=$1
     if [ -z "$obeyfile" ]
     then

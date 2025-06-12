@@ -10,11 +10,6 @@ __pfm-doctor() {
     fi
     shift
 
-    if [[ "$1" == "completion" ]]
-    then
-      return
-    fi
-
     if [[ "1" != "$PFM_SHELL_INIT" ]]
     then
         echo "pfm not initialised in this shell, see \`pfm init'"

@@ -17,24 +17,6 @@ __pfm-complete__internal() {
   fi
   shift
 
-  if  [[ "$1" == "completion" ]]
-  then
-    local cur cword
-    _get_comp_words_by_ref -n '=' cur cword
-    if [ "$cword" = 2 ]
-    then
-      local cmd
-      for cmd in "-" "bash"
-      do
-        if [ -z "$cur" ] || [[ "$cmd" =~ ^$cur ]]
-        then
-          printf "%s " "$cmd"
-        fi
-      done
-    fi
-    return
-  fi
-
   if [ -z "$1" ]
   then
     echo "Add completion to bash shells by running the below. pfm init will"
@@ -59,31 +41,24 @@ __pfm-complete__internal() {
   fi
   shift 1
 
-  local words
-  _get_comp_words_by_ref -n "=" words cur cword;
+  local words cword
+  _get_comp_words_by_ref words cword;
 
-  local search=${words[1]}
+  local cmd=__pfm-${words[1]}
 
   if [[ "$cword" == 1 ]]
   then
-    (
-      shopt -s nullglob
-      \cd "$PFM_LIBEXEC" || return 1
-      local cmd
-      for cmd in "__pfm-${search}"*
-      do
-        printf "%s " "${cmd//__pfm-/}"
-      done
-    )
+    compgen -c "$cmd" | sed 's/^__pfm-//g;s/__.*$//g'
     return
   fi
 
-  if ! [ -f "$PFM_LIBEXEC/__pfm-$search" ]
+  local completion_cmd=${cmd}__completion
+  if ! type -t "$completion_cmd" &>/dev/null
   then
-    return 1
+    return
   fi
 
-  pfm "$search" completion 2>/dev/null || return 1
+  "$completion_cmd" 2>/dev/null
 }
 
 :; __pfm-complete__internal "$@"
