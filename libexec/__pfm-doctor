@@ -21,7 +21,7 @@ __pfm-doctor() {
         for f in "$PFM_LIBEXEC"/*
         do
             local basef; basef="$(basename "$f")"
-            printf "%-20s : %s\n" "$basef" "$(type -t "$basef")"
+            printf "%-30s : %s\n" "$basef" "$(type -t "$basef")"
         done
     )
 
