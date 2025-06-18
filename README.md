@@ -46,3 +46,14 @@ This speeds up execution from the shell and is a proof of concept which may be u
 tooling like jenv which has prompt command interceptors.
 
 The intention is that all features of pfm sould work without this being necessary.
+
+### Syntax AKA what's with all the :;
+
+From here I shall refer to `:;` as CSC - colon semi-colon;
+
+Any line in a file which starts with a CSC is a marker line which will execute when a file itself is run, but
+allows us to exclude those lines when performing shell initialisation for function caching (as above).
+
+Shell initialisation works by sourcing in every file but avoiding execution of these lines by performing a
+simple inverse grep on CSC (among other things), preventing those lines from being executed as part of the
+sourcing.
