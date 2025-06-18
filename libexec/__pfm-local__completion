@@ -6,7 +6,21 @@ __pfm-local__completion() {
 
   if [[ "$cword" == 3 ]]
   then
-    compgen -A hostname -- "$cur"
+    compgen -W "
+      127.0.0.1
+      ::1
+      localhost
+      $(
+        awk '/^Host/ {
+          for (i=2; i<=NF; i++) {
+            if ($i !~ /\*/) {
+              print $i
+            }
+          }
+        }' ~/.ssh/config $(awk '/^Include / { print $2 }' ~/.ssh/config) 2>/dev/null
+        sed 's/^\[//;s/\]:[[:digit:]]*//;s/ .*//' ~/.ssh/known_hosts 2>/dev/null
+      )
+    " -- "$cur"
   fi
 }
 
