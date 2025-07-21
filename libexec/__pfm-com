@@ -12,9 +12,17 @@ __pfm-com() {
 
     echo "# Enter \"help\" for help, \"exit\" or \"quit\" to exit."
 
-    local comm
-    while read -rp "pfmcom > " comm args
+    local comm args
+    while comm="$(export SHELLOPTS; bash -c '
+      HISTFILE=~/.pfm_history;
+      history -r;
+      read -erp "pfmcom > " LINE || exit $?;
+      history -s "$LINE";
+      history -w;
+      echo "$LINE";
+    ')"
     do
+      read -r comm args <<< "$comm"
       if [[ "$comm" == "exit" || "$comm" == "quit" ]]
       then
         break
